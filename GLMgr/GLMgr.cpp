@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "Texture2D.h"
+
 #include "GLMgr.h"
 
 #include "GLProgramSource.h"
@@ -135,6 +137,9 @@ void GLMgr::run(){
             glfwSwapBuffers(window);
             glFlush();
             lastUpdateTime = nowTime;
+        }
+        else{
+            sleep(uSecDuration - (nowTime - lastUpdateTime));
         }
         glfwPollEvents();
         PoolManager::getInstance()->getCurrentPool()->clear();
@@ -428,4 +433,10 @@ void GLMgr::useTestTexture(){
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textureId2);
+}
+
+void GLMgr::bindTexture2D(Texture2D *texture2D, GLint index){
+    GLuint tex2dID = texture2D->getTexID();
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_2D, tex2dID);
 }

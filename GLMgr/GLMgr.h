@@ -8,6 +8,8 @@
 #include "Vertex.h"
 #include "GLProgramSource.h"
 
+class Texture2D;
+
 class GLProgram;
 class GLProgramSource;
 
@@ -23,7 +25,6 @@ public:
     void setRenderFunc(RenderFunc);
     void setUpdateFunc(UpdateFunc);
 
-
     void setClearColor(float r, float g, float b, float a);
     void clearColor();
     void clearDepth();
@@ -36,14 +37,8 @@ public:
         int numOfIndices
     );
 
-    void useDefaultShader();
-    // void useShader(const GLProgramSource *);
-
+    void bindTexture2D(Texture2D *, GLint index);
     void setFPS(float);
-
-
-    // void setUniformParam(const char *name);
-
     static void createInstance();
     static void deleteInstance();
     static GLMgr* getInstance();
