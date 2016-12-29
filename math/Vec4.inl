@@ -1,7 +1,7 @@
 #include "Mat4.h"
 #include "Vec4.h"
 
-namespace {
+namespace Math{
 
 inline const Vec4 Vec4::operator+(const Vec4& v) const
 {

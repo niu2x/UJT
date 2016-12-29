@@ -1,7 +1,8 @@
 #include "Vec3.h"
-#include "math.h"
+#include <cmath>
+#include "mathMacro.h"
 
-namespace {
+namespace Math{
 
 Vec3::Vec3()
     : x(0.0f), y(0.0f), z(0.0f)
@@ -175,7 +176,6 @@ Vec3 Vec3::getNormalized() const
 
 void Vec3::subtract(const Vec3& v1, const Vec3& v2, Vec3* dst)
 {
-    GP_ASSERT(dst);
 
     dst->x = v1.x - v2.x;
     dst->y = v1.y - v2.y;

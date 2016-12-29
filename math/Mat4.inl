@@ -1,6 +1,6 @@
 #include "Mat4.h"
 
-namespace {
+namespace Math{
 
 inline Mat4 Mat4::operator+(const Mat4& mat) const
 {

@@ -1,8 +1,7 @@
 #include "Vec2.h"
-#include "MathUtil.h"
+#include "mathMacro.h"
 
-
-namespace {
+namespace Math{
 
 // returns true if segment A-B intersects with segment C-D. S->E is the overlap part
 bool isOneDimensionSegmentOverlap(float A, float B, float C, float D, float *S, float * E)
@@ -55,15 +54,13 @@ float Vec2::angle(const Vec2& v1, const Vec2& v2)
 
 void Vec2::add(const Vec2& v1, const Vec2& v2, Vec2* dst)
 {
-    GP_ASSERT(dst);
-
     dst->x = v1.x + v2.x;
     dst->y = v1.y + v2.y;
 }
 
 void Vec2::clamp(const Vec2& min, const Vec2& max)
 {
-    GP_ASSERT(!(min.x > max.x || min.y > max.y ));
+    
 
     // Clamp the x value.
     if (x < min.x)
@@ -80,9 +77,7 @@ void Vec2::clamp(const Vec2& min, const Vec2& max)
 
 void Vec2::clamp(const Vec2& v, const Vec2& min, const Vec2& max, Vec2* dst)
 {
-    GP_ASSERT(dst);
-    GP_ASSERT(!(min.x > max.x || min.y > max.y ));
-
+    
     // Clamp the x value.
     dst->x = v.x;
     if (dst->x < min.x)
@@ -297,7 +292,7 @@ Vec2 Vec2::getIntersectPoint(const Vec2& A, const Vec2& B, const Vec2& C, const 
     
     if (isLineIntersect(A, B, C, D, &S, &T))
     {
-        // Vec2 of intersection
+        // Vec2 ofMath intersection
         Vec2 P;
         P.x = A.x + S * (B.x - A.x);
         P.y = A.y + S * (B.y - A.y);

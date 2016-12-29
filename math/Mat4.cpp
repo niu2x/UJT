@@ -1,9 +1,10 @@
 #include "Mat4.h"
+#include "mathMacro.h"
 
-#include <cmath>
 #include "Quaternion.h"
-
-namespace {
+#include <string.h>
+#include <cmath>
+namespace Math{
 
 Mat4::Mat4()
 {
@@ -110,10 +111,6 @@ void Mat4::createOrthographic(float width, float height, float zNearPlane, float
 void Mat4::createOrthographicOffCenter(float left, float right, float bottom, float top,
                                          float zNearPlane, float zFarPlane, Mat4* dst)
 {
-    GP_ASSERT(dst);
-    GP_ASSERT(right != left);
-    GP_ASSERT(top != bottom);
-    GP_ASSERT(zFarPlane != zNearPlane);
 
     memset(dst, 0, MATRIX_SIZE);
     dst->m[0] = 2 / (right - left);
@@ -193,7 +190,6 @@ void Mat4::createBillboardHelper(const Vec3& objectPosition, const Vec3& cameraP
 
 void Mat4::createScale(const Vec3& scale, Mat4* dst)
 {
-    GP_ASSERT(dst);
 
     memcpy(dst, &IDENTITY, MATRIX_SIZE);
 
@@ -204,8 +200,6 @@ void Mat4::createScale(const Vec3& scale, Mat4* dst)
 
 void Mat4::createScale(float xScale, float yScale, float zScale, Mat4* dst)
 {
-    GP_ASSERT(dst);
-
     memcpy(dst, &IDENTITY, MATRIX_SIZE);
 
     dst->m[0] = xScale;
@@ -216,8 +210,6 @@ void Mat4::createScale(float xScale, float yScale, float zScale, Mat4* dst)
 
 void Mat4::createRotation(const Quaternion& q, Mat4* dst)
 {
-    GP_ASSERT(dst);
-
     float x2 = q.x + q.x;
     float y2 = q.y + q.y;
     float z2 = q.z + q.z;
@@ -255,8 +247,6 @@ void Mat4::createRotation(const Quaternion& q, Mat4* dst)
 
 void Mat4::createRotation(const Vec3& axis, float angle, Mat4* dst)
 {
-    GP_ASSERT(dst);
-
     float x = axis.x;
     float y = axis.y;
     float z = axis.z;
@@ -314,8 +304,6 @@ void Mat4::createRotation(const Vec3& axis, float angle, Mat4* dst)
 
 void Mat4::createRotationX(float angle, Mat4* dst)
 {
-    GP_ASSERT(dst);
-
     memcpy(dst, &IDENTITY, MATRIX_SIZE);
 
     float c = std::cos(angle);
@@ -329,8 +317,6 @@ void Mat4::createRotationX(float angle, Mat4* dst)
 
 void Mat4::createRotationY(float angle, Mat4* dst)
 {
-    GP_ASSERT(dst);
-
     memcpy(dst, &IDENTITY, MATRIX_SIZE);
 
     float c = std::cos(angle);
@@ -344,7 +330,6 @@ void Mat4::createRotationY(float angle, Mat4* dst)
 
 void Mat4::createRotationZ(float angle, Mat4* dst)
 {
-    GP_ASSERT(dst);
 
     memcpy(dst, &IDENTITY, MATRIX_SIZE);
 
@@ -359,7 +344,6 @@ void Mat4::createRotationZ(float angle, Mat4* dst)
 
 void Mat4::createTranslation(const Vec3& translation, Mat4* dst)
 {
-    GP_ASSERT(dst);
 
     memcpy(dst, &IDENTITY, MATRIX_SIZE);
 
@@ -370,7 +354,6 @@ void Mat4::createTranslation(const Vec3& translation, Mat4* dst)
 
 void Mat4::createTranslation(float xTranslation, float yTranslation, float zTranslation, Mat4* dst)
 {
-    GP_ASSERT(dst);
 
     memcpy(dst, &IDENTITY, MATRIX_SIZE);
 
@@ -386,12 +369,7 @@ void Mat4::add(float scalar)
 
 void Mat4::add(float scalar, Mat4* dst)
 {
-    GP_ASSERT(dst);
-#ifdef __SSE__
-    MathUtil::addMatrix(col, scalar, dst->col);
-#else
-    MathUtil::addMatrix(m, scalar, dst->m);
-#endif
+
 }
 
 void Mat4::add(const Mat4& mat)
@@ -401,12 +379,7 @@ void Mat4::add(const Mat4& mat)
 
 void Mat4::add(const Mat4& m1, const Mat4& m2, Mat4* dst)
 {
-    GP_ASSERT(dst);
-#ifdef __SSE__
-    MathUtil::addMatrix(m1.col, m2.col, dst->col);
-#else
-    MathUtil::addMatrix(m1.m, m2.m, dst->m);
-#endif
+
 }
 
 bool Mat4::decompose(Vec3* scale, Quaternion* rotation, Vec3* translation) const
@@ -553,8 +526,6 @@ void Mat4::getTranslation(Vec3* translation) const
 
 void Mat4::getUpVector(Vec3* dst) const
 {
-    GP_ASSERT(dst);
-
     dst->x = m[4];
     dst->y = m[5];
     dst->z = m[6];
@@ -562,8 +533,6 @@ void Mat4::getUpVector(Vec3* dst) const
 
 void Mat4::getDownVector(Vec3* dst) const
 {
-    GP_ASSERT(dst);
-    
     dst->x = -m[4];
     dst->y = -m[5];
     dst->z = -m[6];
@@ -571,8 +540,6 @@ void Mat4::getDownVector(Vec3* dst) const
 
 void Mat4::getLeftVector(Vec3* dst) const
 {
-    GP_ASSERT(dst);
-
     dst->x = -m[0];
     dst->y = -m[1];
     dst->z = -m[2];
@@ -580,8 +547,6 @@ void Mat4::getLeftVector(Vec3* dst) const
 
 void Mat4::getRightVector(Vec3* dst) const
 {
-    GP_ASSERT(dst);
-
     dst->x = m[0];
     dst->y = m[1];
     dst->z = m[2];
@@ -589,8 +554,6 @@ void Mat4::getRightVector(Vec3* dst) const
 
 void Mat4::getForwardVector(Vec3* dst) const
 {
-    GP_ASSERT(dst);
-
     dst->x = -m[8];
     dst->y = -m[9];
     dst->z = -m[10];
@@ -598,8 +561,6 @@ void Mat4::getForwardVector(Vec3* dst) const
 
 void Mat4::getBackVector(Vec3* dst) const
 {
-    GP_ASSERT(dst);
-
     dst->x = m[8];
     dst->y = m[9];
     dst->z = m[10];
@@ -678,12 +639,7 @@ void Mat4::multiply(float scalar, Mat4* dst) const
 
 void Mat4::multiply(const Mat4& m, float scalar, Mat4* dst)
 {
-    GP_ASSERT(dst);
-#ifdef __SSE__
-    MathUtil::multiplyMatrix(m.col, scalar, dst->col);
-#else
-    MathUtil::multiplyMatrix(m.m, scalar, dst->m);
-#endif
+    
 }
 
 void Mat4::multiply(const Mat4& mat)
@@ -693,21 +649,12 @@ void Mat4::multiply(const Mat4& mat)
 
 void Mat4::multiply(const Mat4& m1, const Mat4& m2, Mat4* dst)
 {
-    GP_ASSERT(dst);
-#ifdef __SSE__
-    MathUtil::multiplyMatrix(m1.col, m2.col, dst->col);
-#else
-    MathUtil::multiplyMatrix(m1.m, m2.m, dst->m);
-#endif
+    
 }
 
 void Mat4::negate()
 {
-#ifdef __SSE__
-    MathUtil::negateMatrix(col, col);
-#else
-    MathUtil::negateMatrix(m, m);
-#endif
+
 }
 
 Mat4 Mat4::getNegated() const
@@ -832,7 +779,6 @@ void Mat4::set(float m11, float m12, float m13, float m14, float m21, float m22,
 
 void Mat4::set(const float* mat)
 {
-    GP_ASSERT(mat);
     memcpy(this->m, mat, MATRIX_SIZE);
 }
 
@@ -858,17 +804,11 @@ void Mat4::subtract(const Mat4& mat)
 
 void Mat4::subtract(const Mat4& m1, const Mat4& m2, Mat4* dst)
 {
-    GP_ASSERT(dst);
-#ifdef __SSE__
-    MathUtil::subtractMatrix(m1.col, m2.col, dst->col);
-#else
-    MathUtil::subtractMatrix(m1.m, m2.m, dst->m);
-#endif
+    
 }
 
 void Mat4::transformVector(Vec3* vector) const
 {
-    GP_ASSERT(vector);
     transformVector(vector->x, vector->y, vector->z, 0.0f, vector);
 }
 
@@ -879,25 +819,17 @@ void Mat4::transformVector(const Vec3& vector, Vec3* dst) const
 
 void Mat4::transformVector(float x, float y, float z, float w, Vec3* dst) const
 {
-    GP_ASSERT(dst);
-
-    MathUtil::transformVec4(m, x, y, z, w, (float*)dst);
+    
 }
 
 void Mat4::transformVector(Vec4* vector) const
 {
-    GP_ASSERT(vector);
     transformVector(*vector, vector);
 }
 
 void Mat4::transformVector(const Vec4& vector, Vec4* dst) const
 {
-    GP_ASSERT(dst);
-#ifdef __SSE__
-    MathUtil::transformVec4(col, vector.v, dst->v);
-#else
-    MathUtil::transformVec4(m, (const float*) &vector, (float*)dst);
-#endif
+    
 }
 
 void Mat4::translate(float x, float y, float z)
@@ -924,11 +856,7 @@ void Mat4::translate(const Vec3& t, Mat4* dst) const
 
 void Mat4::transpose()
 {
-#ifdef __SSE__
-    MathUtil::transposeMatrix(col, col);
-#else
-    MathUtil::transposeMatrix(m, m);
-#endif
+
 }
 
 Mat4 Mat4::getTransposed() const

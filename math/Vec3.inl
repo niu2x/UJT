@@ -1,7 +1,8 @@
 #include "Vec3.h"
 #include "Mat4.h"
 
-namespace math{
+#include <math.h>
+namespace Math{
 
 
 inline bool Vec3::isZero() const
@@ -30,7 +31,7 @@ inline void Vec3::add(float xx, float yy, float zz)
 
 inline float Vec3::length() const
 {
-    return std::sqrt(x * x + y * y + z * z);
+    return sqrt(x * x + y * y + z * z);
 }
 
 inline float Vec3::lengthSquared() const

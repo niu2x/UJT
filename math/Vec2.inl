@@ -20,7 +20,7 @@
 
 #include "Vec2.h"
 
-namespace math{
+namespace Math{
 
 inline Vec2::Vec2()
 : x(0.0f), y(0.0f)

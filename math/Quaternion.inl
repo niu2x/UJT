@@ -1,6 +1,6 @@
 #include "Quaternion.h"
 
-namespace {
+namespace Math{
 
 inline Quaternion Quaternion::operator*(const Quaternion& q) const
 {

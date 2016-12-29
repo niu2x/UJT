@@ -2,9 +2,8 @@
 #define QUATERNION_H_
 
 #include "Vec3.h"
-#include "Mat4.h"
 
-namespace {
+namespace Math{
 
 class Mat4;
 

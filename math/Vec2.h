@@ -25,9 +25,7 @@
 #include <algorithm>
 #include <functional>
 #include <math.h>
-#include "math.h"
-
-namespace math{
+namespace Math{
 
 inline float clampf(float value, float min_inclusive, float max_inclusive)
 {
@@ -147,7 +145,7 @@ public:
     bool fuzzyEquals(const Vec2& target, float variance) const;
 
     inline float getLength() const {
-        return sqrtf(x*x + y*y);
+        return sqrt(x*x + y*y);
     };
 
     inline float getLengthSq() const {
@@ -250,7 +248,7 @@ public:
      */
     static inline Vec2 forAngle(const float a)
     {
-        return Vec2(cosf(a), sinf(a));
+        return Vec2(cos(a), sin(a));
     }
     
     /** A general line-line intersection test

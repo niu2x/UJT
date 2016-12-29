@@ -1,8 +1,8 @@
 #include "Vec4.h"
-
 #include <cmath>
+#include "mathMacro.h"
 
-namespace {
+namespace Math{
 
 Vec4::Vec4()
     : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
@@ -85,7 +85,6 @@ void Vec4::add(const Vec4& v1, const Vec4& v2, Vec4* dst)
 
 void Vec4::clamp(const Vec4& min, const Vec4& max)
 {
-    GP_ASSERT(!(min.x > max.x || min.y > max.y || min.z > max.z || min.w > max.w));
 
     // Clamp the x value.
     if (x < min.x)

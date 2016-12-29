@@ -7,7 +7,7 @@
 #define MATRIX_SIZE ( sizeof(float) * 16)
 
 
-namespace {
+namespace Math{
 
 //class Plane;
 
@@ -711,7 +711,7 @@ public:
      *
      * @param point The point to transform and also a vector to hold the result in.
      */
-    inline void transformPoint(Vec3* point) const { GP_ASSERT(point); transformVector(point->x, point->y, point->z, 1.0f, point); }
+    inline void transformPoint(Vec3* point) const {transformVector(point->x, point->y, point->z, 1.0f, point); }
 
     /**
      * Transforms the specified point by this matrix, and stores
@@ -720,7 +720,7 @@ public:
      * @param point The point to transform.
      * @param dst A vector to store the transformed point in.
      */
-    inline void transformPoint(const Vec3& point, Vec3* dst) const { GP_ASSERT(dst); transformVector(point.x, point.y, point.z, 1.0f, dst); }
+    inline void transformPoint(const Vec3& point, Vec3* dst) const {transformVector(point.x, point.y, point.z, 1.0f, dst); }
 
     /**
      * Transforms the specified vector by this matrix by

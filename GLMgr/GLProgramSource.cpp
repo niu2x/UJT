@@ -1,7 +1,7 @@
-#include "ShaderSource.h"
+#include "GLProgramSource.h"
 #include "macro.h"
 
-ShaderSource::ShaderSource():
+GLProgramSource::GLProgramSource():
 vertexSource(""),
 tessCtrlSource(""),
 tessEvalSource(""),
@@ -11,29 +11,29 @@ fragmentSource("")
 
 }
 
-ShaderSource *ShaderSource::createWithStrings(
-	const std::string &__vertexSource, 
+GLProgramSource *GLProgramSource::createWithStrings(
+	const std::string &__vertexSource,
 	const std::string &__tessCtrlSource, 
 	const std::string &__tessEvalSource, 
 	const std::string &__geometrySource, 
 	const std::string &__fragmentSource
 ){
-	ShaderSource *shaderSource = new (std::nothrow) ShaderSource();
-	if(shaderSource && shaderSource->initWithStrings(
+	GLProgramSource *program = new (std::nothrow) GLProgramSource();
+	if(program && program->initWithStrings(
 	    	__vertexSource,
 			__tessCtrlSource,
 			__tessEvalSource,
 			__geometrySource,
 			__fragmentSource
        )){
-		shaderSource->autorelease();
-		return shaderSource;
+		program->autorelease();
+		return program;
 	}
-	SAFE_DELETE(shaderSource);
+	SAFE_DELETE(program);
 	return nullptr;
 }
 
-ShaderSource *ShaderSource::createWithStrings(
+GLProgramSource *GLProgramSource::createWithStrings(
 	const char *__vertexSource, 
 	const char *__tessCtrlSource, 
 	const char *__tessEvalSource, 
@@ -49,7 +49,7 @@ ShaderSource *ShaderSource::createWithStrings(
 	);
 }
 
-bool ShaderSource::initWithStrings(
+bool GLProgramSource::initWithStrings(
 	const std::string &__vertexSource, 
 	const std::string &__tessCtrlSource, 
 	const std::string &__tessEvalSource, 
@@ -64,7 +64,7 @@ bool ShaderSource::initWithStrings(
 	return true;
 }
 
-const char *ShaderSource::getVertexSource()const{
+const char *GLProgramSource::getVertexSource()const{
 	if(vertexSource == std::string("")){
 		return nullptr;
 	}
@@ -73,7 +73,7 @@ const char *ShaderSource::getVertexSource()const{
 	}
 }
 
-const char *ShaderSource::getTessCtrlSource()const{
+const char *GLProgramSource::getTessCtrlSource()const{
 	if(tessCtrlSource == std::string("")){
 		return nullptr;
 	}
@@ -82,7 +82,7 @@ const char *ShaderSource::getTessCtrlSource()const{
 	}
 }
 
-const char *ShaderSource::getTessEvalSource()const{
+const char *GLProgramSource::getTessEvalSource()const{
 	if(tessEvalSource == std::string("")){
 		return nullptr;
 	}
@@ -91,7 +91,7 @@ const char *ShaderSource::getTessEvalSource()const{
 	}
 }
 
-const char *ShaderSource::getGeometrySource()const{
+const char *GLProgramSource::getGeometrySource()const{
 	if(geometrySource == std::string("")){
 		return nullptr;
 	}
@@ -100,7 +100,7 @@ const char *ShaderSource::getGeometrySource()const{
 	}
 }
 
-const char *ShaderSource::getFragmentSource()const{
+const char *GLProgramSource::getFragmentSource()const{
 	if(fragmentSource == std::string("")){
 		return nullptr;
 	}

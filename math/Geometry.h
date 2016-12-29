@@ -26,11 +26,9 @@ THE SOFTWARE.
 #ifndef __MATH_GEOMETRY_H__
 #define __MATH_GEOMETRY_H__
 
-#include <math.h>
+#include "Vec2.h"
 
-#include "math.h"
-
-namespace math{
+namespace Math{
 
 class Size
 {

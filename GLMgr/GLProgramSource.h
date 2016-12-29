@@ -1,5 +1,5 @@
-#ifndef __shaderSource__
-#define __shaderSource__
+#ifndef __GLProgramSource__
+#define __GLProgramSource__
 
 #include <string>
 
@@ -7,16 +7,16 @@
 
 #define GLSL(src) "#version 400 core\n" #src
 
-class ShaderSource: public Ref{
+class GLProgramSource: public Ref{
 public:
-	static ShaderSource * createWithStrings(
+	static GLProgramSource * createWithStrings(
 		const std::string &, 
 		const std::string &, 
 		const std::string &, 
 		const std::string &, 
 		const std::string &
 	);
-	static ShaderSource * createWithStrings(
+	static GLProgramSource * createWithStrings(
 		const char *, 
 		const char *, 
 		const char *, 
@@ -31,7 +31,7 @@ public:
 	const char *getFragmentSource()const;
 
 protected:
-	ShaderSource();
+	GLProgramSource();
 	bool initWithStrings(
 		const std::string &, 
 		const std::string &, 
@@ -39,7 +39,7 @@ protected:
 		const std::string &, 
 		const std::string &
 	);
-	virtual ~ShaderSource(){}
+	virtual ~GLProgramSource(){}
 
 private:
 	std::string vertexSource;

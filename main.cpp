@@ -5,7 +5,6 @@
 //  Created by Xiaorong Niu on 16/12/20.
 //  Copyright © 2016年 Xiaorong Niu. All rights reserved.
 //
-
 #include "GLMgr/GLMgr.h"
 #include "refCount/AutoReleasePool.h"
 
@@ -16,7 +15,7 @@
 
 int main(void)
 {
-    puts("1");
+    
     PoolManager::getInstance()->createInstance();
 
     GLMgr::getInstance()->createInstance();
@@ -24,8 +23,8 @@ int main(void)
     GLMgr::getInstance()->setClearColor(0, 0, 0, 0.5);
 
     Vertex vertexs[4];
-    vertexs[0].x = 0;
-    vertexs[0].y = -1;
+    vertexs[0].x = -1000;
+    vertexs[0].y = -1000;
     vertexs[0].z = 0;
     vertexs[0].r = 1;
     vertexs[0].g = 0;
@@ -34,8 +33,8 @@ int main(void)
     vertexs[0].u = 0;
     vertexs[0].v = 0;
 
-    vertexs[1].x = 1;
-    vertexs[1].y = 0;
+    vertexs[1].x = 1000;
+    vertexs[1].y = -1000;
     vertexs[1].z = 0;
     vertexs[1].r = 0;
     vertexs[1].g = 1;
@@ -44,8 +43,8 @@ int main(void)
     vertexs[1].u = 0;
     vertexs[1].v = 1;
 
-    vertexs[2].x = -1;
-    vertexs[2].y = 0;
+    vertexs[2].x = 1000;
+    vertexs[2].y = 1000;
     vertexs[2].z = 0;
     vertexs[2].r = 0;
     vertexs[2].g = 0;
@@ -54,8 +53,8 @@ int main(void)
     vertexs[2].u = 1;
     vertexs[2].v = 0;
 
-    vertexs[3].x = 0;
-    vertexs[3].y = 1;
+    vertexs[3].x = -1000;
+    vertexs[3].y = 1000;
     vertexs[3].z = 0;
     vertexs[3].r = 0;
     vertexs[3].g = 0;
@@ -64,7 +63,7 @@ int main(void)
     vertexs[3].u = 1;
     vertexs[3].v = 0;
 
-    GLushort indices[] = {1, 3, 2, 0, 1, 1}; 
+    GLushort indices[] = {0, 1, 2, 0, 2, 3};
 
     GLMgr::getInstance()->setRenderFunc([&vertexs, &indices](){
         GLMgr::getInstance()->clearColor();

@@ -3,9 +3,11 @@
 
 #include "GLMgr.h"
 
-#include "ShaderSource.h"
+#include "GLProgramSource.h"
 #include "AutoReleasePool.h"
-// #include "defaultShader.h"
+
+#include "../math/BaseMath.h"
+#include "GLProgram.h"
 
 #include "../macro.h"
 
@@ -104,6 +106,7 @@ void GLMgr::initVAOAndVBO(){
 
 GLMgr::~GLMgr(){
 	if(inited){
+        SAFE_RELEASE(glProgram);
         glDeleteBuffers(1, &VBO);
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &EBO);
@@ -167,6 +170,10 @@ void GLMgr::drawTriangles(
 
 void GLMgr::useDefaultShader(){
     const GLchar* default_vertexSource = GLSL(
+
+        uniform mat4 view;
+        uniform mat4 project;
+
         in vec3 position;
         in vec2 uv;
         in vec4 color;
@@ -175,7 +182,7 @@ void GLMgr::useDefaultShader(){
         void main() {
             mColor = color;
             mUV = uv;
-            gl_Position = vec4(position, 1.0f);
+            gl_Position = project * view * vec4(position, 1.0f);
         }
     );
 
@@ -191,102 +198,145 @@ void GLMgr::useDefaultShader(){
             // oColor = mColor;
             // oColor = vec4(mUV, 1, 1);
             oColor = texture(Texture0, mUV) * texture(Texture1, mUV);
-            // oColor = vec4(1, 1, 1, 1);
-            // oColor = vec4(1, 0, 1, 1);
-            oColor = vec4(1, 1, 1, 1);
+
         }
     );
 
-    auto shaderSource = ShaderSource::createWithStrings(
+    auto shaderSource = GLProgramSource::createWithStrings(
         default_vertexSource, nullptr, nullptr, nullptr, default_fragmentSource
     );
 
 
-    useShader(shaderSource);
+    glProgram = GLProgram::createWithGLProgramSource(shaderSource);
+    glProgram->retain();
+
+    glProgram->use();
+
+
+    auto view = Math::Mat4();
+    Math::Mat4::createLookAt(
+        Math::Vec3(0, 0, 2000),
+        Math::Vec3(0, 1000, 0),
+        Math::Vec3(0, 1, 0),
+        &view
+    );
+    glProgram->setUniformMatrix4fv("view", view.m);
+
+    auto project = Math::Mat4();
+    Math::Mat4::createPerspective(
+        60,
+        1,
+        1,
+        8000,
+        &project
+    );
+    glProgram->setUniformMatrix4fv("project", project.m);
 
     useTestTexture();
 }
 
-GLuint createShader(GLenum type, const GLchar* src)
-{
-    GLuint shader = glCreateShader(type);
+// GLuint createShader(GLenum type, const GLchar* src)
+// {
+//     GLuint shader = glCreateShader(type);
 
-    glShaderSource(shader, 1, &src, nullptr);
+//     glShaderSource(shader, 1, &src, nullptr);
 
-    glCompileShader(shader); 
+//     glCompileShader(shader); 
 
-    return shader;
-}
+//     return shader;
+// }
 
-void GLMgr::useShader(const ShaderSource *shaderSource){
-    GLuint shaderProgram = glCreateProgram();
+// void GLMgr::useShader(const ShaderSource *shaderSource){
+//     GLuint shaderProgram = glCreateProgram();
 
-    if(shaderSource->getVertexSource()){
-        glAttachShader(shaderProgram, createShader(
-            GL_VERTEX_SHADER, shaderSource->getVertexSource()
-        ));
-    }
+//     if(shaderSource->getVertexSource()){
+//         glAttachShader(shaderProgram, createShader(
+//             GL_VERTEX_SHADER, shaderSource->getVertexSource()
+//         ));
+//     }
 
-    if(shaderSource->getTessCtrlSource()){
-        glAttachShader(shaderProgram, createShader(
-            GL_TESS_CONTROL_SHADER, shaderSource->getTessCtrlSource()
-        ));
-    }
+//     if(shaderSource->getTessCtrlSource()){
+//         glAttachShader(shaderProgram, createShader(
+//             GL_TESS_CONTROL_SHADER, shaderSource->getTessCtrlSource()
+//         ));
+//     }
 
-    if(shaderSource->getTessEvalSource()){
-        glAttachShader(shaderProgram, createShader(
-            GL_TESS_EVALUATION_SHADER, shaderSource->getTessEvalSource()
-        ));
-    }
+//     if(shaderSource->getTessEvalSource()){
+//         glAttachShader(shaderProgram, createShader(
+//             GL_TESS_EVALUATION_SHADER, shaderSource->getTessEvalSource()
+//         ));
+//     }
 
-    if(shaderSource->getGeometrySource()){
-        glAttachShader(shaderProgram, createShader(
-            GL_GEOMETRY_SHADER, shaderSource->getGeometrySource()
-        ));
-    }
+//     if(shaderSource->getGeometrySource()){
+//         glAttachShader(shaderProgram, createShader(
+//             GL_GEOMETRY_SHADER, shaderSource->getGeometrySource()
+//         ));
+//     }
 
-    if(shaderSource->getFragmentSource()){
-        glAttachShader(shaderProgram, createShader(
-            GL_FRAGMENT_SHADER, shaderSource->getFragmentSource()
-        ));
-    }
+//     if(shaderSource->getFragmentSource()){
+//         glAttachShader(shaderProgram, createShader(
+//             GL_FRAGMENT_SHADER, shaderSource->getFragmentSource()
+//         ));
+//     }
 
-    char log[1024];
-    glGetProgramInfoLog(shaderProgram, 1023, 0, log);
-    puts(log);
+//     char log[1024];
+//     glGetProgramInfoLog(shaderProgram, 1023, 0, log);
+//     puts(log);
 
-    glLinkProgram(shaderProgram);
+//     glLinkProgram(shaderProgram);
 
-    glUseProgram(shaderProgram);       
+//     glUseProgram(shaderProgram);       
 
-    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-    // GLint posAttrib = 0;
-    glEnableVertexAttribArray(posAttrib);
+//     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+//     // GLint posAttrib = 0;
+//     glEnableVertexAttribArray(posAttrib);
 
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+//     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 
-    GLint uvAttrib = glGetAttribLocation(shaderProgram, "uv");
-    // GLint uvAttrib = 1;
-    glEnableVertexAttribArray(uvAttrib);
+//     GLint uvAttrib = glGetAttribLocation(shaderProgram, "uv");
+//     // GLint uvAttrib = 1;
+//     glEnableVertexAttribArray(uvAttrib);
 
-    glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)12);
+//     glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)12);
 
-    GLint colorAttrib = glGetAttribLocation(shaderProgram, "color");
-    // GLint colorAttrib = 2;
-    glEnableVertexAttribArray(colorAttrib);
+//     GLint colorAttrib = glGetAttribLocation(shaderProgram, "color");
+//     // GLint colorAttrib = 2;
+//     glEnableVertexAttribArray(colorAttrib);
 
-    glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)20);
+//     glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)20);
 
-    GLint tex0Location = glGetUniformLocation(shaderProgram, "Texture0");
-    GLint tex1Location = glGetUniformLocation(shaderProgram, "Texture1");
-    GLint tex2Location = glGetUniformLocation(shaderProgram, "Texture2");
-    GLint tex3Location = glGetUniformLocation(shaderProgram, "Texture3");
+//     GLint tex0Location = glGetUniformLocation(shaderProgram, "Texture0");
+//     GLint tex1Location = glGetUniformLocation(shaderProgram, "Texture1");
+//     GLint tex2Location = glGetUniformLocation(shaderProgram, "Texture2");
+//     GLint tex3Location = glGetUniformLocation(shaderProgram, "Texture3");
 
-    glUniform1i(tex0Location, 0);
-    glUniform1i(tex1Location, 1);
-    glUniform1i(tex2Location, 2);
-    glUniform1i(tex3Location, 3);
-}
+//     GLint viewLocation = glGetUniformLocation(shaderProgram, "view");
+//     GLint projectLocation = glGetUniformLocation(shaderProgram, "project");
+
+//     glUniform1i(tex0Location, 0);
+//     glUniform1i(tex1Location, 1);
+//     glUniform1i(tex2Location, 2);
+//     glUniform1i(tex3Location, 3);
+
+//     auto view = Math::Mat4();
+//     Math::Mat4::createLookAt(
+//         Math::Vec3(0, 0, 2000),
+//         Math::Vec3(0, 1000, 0),
+//         Math::Vec3(0, 1, 0),
+//         &view
+//     );
+//     glUniformMatrix4fv(viewLocation, 1, GL_FALSE, view.m);
+
+//     auto project = Math::Mat4();
+//     Math::Mat4::createPerspective(
+//         60,
+//         1,
+//         1,
+//         8000,
+//         &project
+//     );
+//     glUniformMatrix4fv(projectLocation, 1, GL_FALSE, project.m);
+// }
 
 void GLMgr::setFPS(float __targetFPS){
     targetFPS = __targetFPS;

@@ -5,18 +5,11 @@
 #include <GLFW/glfw3.h>
 #include <functional>
 #include <sys/time.h>
-#include "ShaderSource.h"
+#include "Vertex.h"
+#include "GLProgramSource.h"
 
-typedef struct __Vertex{
-    union{
-        struct {GLfloat _data[9];};
-        struct {
-            GLfloat x, y, z;
-            GLfloat u, v;
-            GLfloat r, g, b, a;
-        };
-    };
-}Vertex;
+class GLProgram;
+class GLProgramSource;
 
 class GLMgr{
 
@@ -44,11 +37,10 @@ public:
     );
 
     void useDefaultShader();
-    void useShader(const ShaderSource *);
+    // void useShader(const GLProgramSource *);
 
     void setFPS(float);
 
-    // void setShader(const ShaderSource& source);
 
     // void setUniformParam(const char *name);
 
@@ -60,6 +52,7 @@ private:
     void initVAOAndVBO();
     void useTestTexture();
 
+    GLProgram *glProgram;
     GLFWwindow* window;
     int width, height;
     bool inited;

@@ -1,8 +1,6 @@
 #include "Quaternion.h"
-
 #include <cmath>
-
-namespace math{
+namespace Math{
 
 const Quaternion Quaternion::ZERO(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -69,17 +67,16 @@ void Quaternion::createFromRotationMatrix(const Mat4& m, Quaternion* dst)
 
 void Quaternion::createFromAxisAngle(const Vec3& axis, float angle, Quaternion* dst)
 {
-    GP_ASSERT(dst);
 
     float halfAngle = angle * 0.5f;
-    float sinHalfAngle = sinf(halfAngle);
+    float sinHalfAngle = sin(halfAngle);
 
     Vec3 normal(axis);
     normal.normalize();
     dst->x = normal.x * sinHalfAngle;
     dst->y = normal.y * sinHalfAngle;
     dst->z = normal.z * sinHalfAngle;
-    dst->w = cosf(halfAngle);
+    dst->w = cos(halfAngle);
 }
 
 void Quaternion::conjugate()
@@ -137,7 +134,6 @@ void Quaternion::multiply(const Quaternion& q)
 
 void Quaternion::multiply(const Quaternion& q1, const Quaternion& q2, Quaternion* dst)
 {
-    GP_ASSERT(dst);
 
     float x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
     float y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
@@ -235,18 +231,18 @@ void Quaternion::lerp(const Quaternion& q1, const Quaternion& q2, float t, Quate
 {
     if (t == 0.0f)
     {
-        dist->x = q1.x;
-        dist->y = q1.y;
-        dist->z = q1.z;
-        dist->w = q1.w;
+        dst->x = q1.x;
+        dst->y = q1.y;
+        dst->z = q1.z;
+        dst->w = q1.w;
         return;
     }
     else if (t == 1.0f)
     {
-        dist->x = q2.x;
-        dist->y = q2.y;
-        dist->z = q2.z;
-        dist->w = q2.w;
+        dst->x = q2.x;
+        dst->y = q2.y;
+        dst->z = q2.z;
+        dst->w = q2.w;
         return;
     }
 

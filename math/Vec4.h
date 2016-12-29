@@ -1,9 +1,7 @@
 #ifndef MATH_VEC4_H
 #define MATH_VEC4_H
 
-#include "math.h"
-
-namespace {
+namespace Math{
 
 class Mat4;
 
@@ -119,6 +117,6 @@ inline const Vec4 operator*(float x, const Vec4& v);
 
 }
 
-#include "math/Vec4.inl"
+#include "Vec4.inl"
 
 #endif // MATH_VEC4_H

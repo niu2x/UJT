@@ -1,8 +1,10 @@
-#include "CCGeometry.h"
+#include "Geometry.h"
 
 #include <algorithm>
 
-namespace math{
+#include "mathMacro.h"
+
+namespace Math{
 
 Size::Size(void) : width(0), height(0)
 {
@@ -49,7 +51,6 @@ Size Size::operator*(float a) const
 
 Size Size::operator/(float a) const
 {
-	CCASSERT(a!=0, "CCSize division by 0.");
     return Size(this->width / a, this->height / a);
 }
 
