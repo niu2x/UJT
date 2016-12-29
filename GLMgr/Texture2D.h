@@ -9,18 +9,22 @@
 class Texture2D:public Ref{
 public:
 	// RGBA
-	Texture2D *createWithRawData(unsigned char *data, int width, int height, GLenum image_format = GL_RGBA);
-	Texture2D *createWithPNG(const char *filename, GLenum image_format);
+	static Texture2D *createWithRawData(unsigned char *data, int width, int height, GLenum imageFormat);
+	static Texture2D *createWithFile(const char *filename);
+
+	GLuint getTexID()const{
+		return texID;
+	} 
+	void use(GLint index);
 
 private:
 
 	Texture2D();
 	virtual ~Texture2D();
 
-	bool initWithRawData(unsigned char *data, int width, int height, GLenum image_format = GL_RGBA);
-	bool initWithPNG(const char *, GLenum image_format);
+	bool initWithRawData(unsigned char *data, int width, int height, GLenum imageFormat);
+	bool initWithFile(const char *);
 
-	void use(GLint index);
 
 	int width;
 	int height;

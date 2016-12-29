@@ -10,6 +10,19 @@
 
 class GLProgramSource;
 
+class BlendFunc{
+public:
+	GLenum src;
+	GLenum dst;
+	BlendFunc(GLenum _src, GLenum _dst){
+		src = _src;
+		dst = _dst;
+	}
+	~BlendFunc(){
+
+	}
+};
+
 class GLProgram:public Ref{
 
 public:
@@ -28,10 +41,17 @@ private:
 
 	virtual void initParams();
 
+	void setBlendFunc(const BlendFunc &);
+	BlendFunc getBlendFunc()const{
+		return blendFunc;
+	}
+
 	std::map<std::string, GLint> localtions;
 
     GLProgramSource *source;
 	GLuint programID;
+
+	BlendFunc blendFunc;
 };
 
 #endif

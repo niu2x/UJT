@@ -10,19 +10,15 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "scene/Director.h"
 
 #include "macro.h"
+#include "math/Vec3.h"
 
 int main(void)
 {
-    
-    PoolManager::getInstance()->createInstance();
 
-    GLMgr::getInstance()->createInstance();
-    GLMgr::getInstance()->init(640, 480);
-    GLMgr::getInstance()->setClearColor(0, 0, 0, 0.5);
-
-    Vertex vertexs[4];
+    Vertex vertexs[5];
     vertexs[0].x = -1000;
     vertexs[0].y = -1000;
     vertexs[0].z = 0;
@@ -40,8 +36,8 @@ int main(void)
     vertexs[1].g = 1;
     vertexs[1].b = 0;
     vertexs[1].a = 1;
-    vertexs[1].u = 0;
-    vertexs[1].v = 1;
+    vertexs[1].u = 1;
+    vertexs[1].v = 0;
 
     vertexs[2].x = 1000;
     vertexs[2].y = 1000;
@@ -51,7 +47,7 @@ int main(void)
     vertexs[2].b = 1;
     vertexs[2].a = 1;
     vertexs[2].u = 1;
-    vertexs[2].v = 0;
+    vertexs[2].v = 1;
 
     vertexs[3].x = -1000;
     vertexs[3].y = 1000;
@@ -60,22 +56,30 @@ int main(void)
     vertexs[3].g = 0;
     vertexs[3].b = 1;
     vertexs[3].a = 1;
-    vertexs[3].u = 1;
-    vertexs[3].v = 0;
+    vertexs[3].u = 0;
+    vertexs[3].v = 1;
 
-    GLushort indices[] = {0, 1, 2, 0, 2, 3};
+    vertexs[4].x = 0;
+    vertexs[4].y = 0;
+    vertexs[4].z = 0;
+    vertexs[4].r = 0;
+    vertexs[4].g = 0;
+    vertexs[4].b = 1;
+    vertexs[4].a = 1;
+    vertexs[4].u = 0.5;
+    vertexs[4].v = 0.5;
 
-    GLMgr::getInstance()->setRenderFunc([&vertexs, &indices](){
-        GLMgr::getInstance()->clearColor();
-        GLMgr::getInstance()->drawTriangles(vertexs, 4, indices, 6);
-    });
-    GLMgr::getInstance()->setUpdateFunc([&vertexs](){
-        return false;
-    });
-    GLMgr::getInstance()->run();
-    GLMgr::getInstance()->deleteInstance();
+    GLushort indices[] = {4, 2, 3, 4, 0, 1, 4, 1, 2, 4, 3, 0};
 
-    PoolManager::getInstance()->deleteInstance();
+
+    Director::createInstance();
+
+    // auto scene = Scene::create();
+    // scene->setCamera(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1));
+    // Director::getInstance()->pushScene(scene);
+    Director::getInstance()->run();
+
+    Director::deleteInstance();
 
     return 0;
 }

@@ -6,7 +6,10 @@
 #include "GLProgramSource.h"
 #include "Vertex.h"
 
-GLProgram::GLProgram():source(nullptr), programID(0)
+GLProgram::GLProgram():
+source(nullptr), 
+programID(0), 
+blendFunc(BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA))
 {
 
 }
@@ -178,6 +181,7 @@ bool GLProgram::createShader(GLenum type, const GLchar* src, GLuint *shader)
 void GLProgram::use(){
 	glUseProgram(programID);       
     initParams();
+    glBlendFunc(blendFunc.src, blendFunc.dst);
 }
 
 void GLProgram::initParams(){
@@ -225,3 +229,8 @@ void GLProgram::setUniformMatrix4fv(std::string name, void *ptr){
 	GLint location = localtions[name];
 	glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat *)ptr);
 }
+
+void GLProgram::setBlendFunc(const BlendFunc &_blendFunc){
+    blendFunc = _blendFunc;
+}
+

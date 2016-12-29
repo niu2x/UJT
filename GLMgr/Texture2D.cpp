@@ -2,7 +2,8 @@
 
 #include "GLMgr.h"
 
-#include "../external/FreeImage/FreeImage.h"
+#include <FreeImage.h>
+#include "macro.h"
 
 Texture2D::Texture2D():width(-1), height(-1), texID(0), valid(false){
 
@@ -10,15 +11,14 @@ Texture2D::Texture2D():width(-1), height(-1), texID(0), valid(false){
 
 Texture2D::~Texture2D(){
 	if(valid){
-		glDeleteTextures(1, &textureId);
+		glDeleteTextures(1, &texID);
 		valid = true;
 	}
 }
 
-Texture2D *Texture2D::createWithRawData(unsigned char *data, int width, int height, GLenum image_format){
+Texture2D *Texture2D::createWithRawData(unsigned char *data, int width, int height, GLenum imageFormat){
 	Texture2D *tex = new Texture2D();
-	if(tex && tex->initWithRawData(data, width, height, image_format)){
-		valid = true;
+	if(tex && tex->initWithRawData(data, width, height, imageFormat)){
 		tex->autorelease();
 		return tex;
 	}
@@ -26,7 +26,7 @@ Texture2D *Texture2D::createWithRawData(unsigned char *data, int width, int heig
 	return nullptr;
 }
 
-bool Texture2D::initWithRawData(unsigned char *data, int width, int height, GLenum image_format){
+bool Texture2D::initWithRawData(unsigned char *data, int width, int height, GLenum imageFormat){
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID); // 此处暂时无所谓绑定到哪个纹理单元，因为绘制之前还会重新绑定
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
@@ -36,10 +36,12 @@ bool Texture2D::initWithRawData(unsigned char *data, int width, int height, GLen
         0, 0, 
         width, 
         height, 
-        image_format,
+        imageFormat,
         GL_UNSIGNED_BYTE,
         data
     );
+    
+    valid = true;
     return true;
 }
 
@@ -47,10 +49,9 @@ void Texture2D::use(GLint index){
 	GLMgr::getInstance()->bindTexture2D(this, index);
 }
 
-Texture2D *Texture2D::createWithPNG(const char *filename, GLenum image_format){
+Texture2D *Texture2D::createWithFile(const char *filename){
 	Texture2D *tex = new Texture2D();
-	if(tex && tex->initWithPNG(filename, image_format)){
-		valid = true;
+	if(tex && tex->initWithFile(filename)){
 		tex->autorelease();
 		return tex;
 	}
@@ -58,7 +59,7 @@ Texture2D *Texture2D::createWithPNG(const char *filename, GLenum image_format){
 	return nullptr;
 }
 
-bool Texture2D::initWithPNG(const char *filename, GLenum image_format){
+bool Texture2D::initWithFile(const char *filename){
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	FIBITMAP *dib(0);
@@ -78,11 +79,29 @@ bool Texture2D::initWithPNG(const char *filename, GLenum image_format){
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
 
+	int imageType = FreeImage_GetImageType(dib);
+	unsigned int bpp = FreeImage_GetBPP(dib);
+	GLenum imageFormat;
+
+	switch(bpp){
+		case 32:
+			imageFormat = GL_BGRA;
+			break;
+		case 24:
+			imageFormat = GL_BGR;
+			break;
+		default:
+			printf("texture2D: error bpp: %d\n", bpp);
+			return false;
+	}
+
+	printf("colorUsed %d\n", FreeImage_GetColorType(dib));
+
 	//if this somehow one of these failed (they shouldn't), return failure
 	if((bits == 0) || (width == 0) || (height == 0))
 		return false;
 
-	bool ret = initWithRawData(bits, width, height, image_format);
+	bool ret = initWithRawData(bits, width, height, imageFormat);
 
 	FreeImage_Unload(dib);
 

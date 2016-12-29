@@ -8,10 +8,9 @@
 #include "Vertex.h"
 #include "GLProgramSource.h"
 
-class Texture2D;
-
-class GLProgram;
 class GLProgramSource;
+class Texture2D;
+class GLProgram;
 
 class GLMgr{
 
@@ -44,8 +43,9 @@ public:
     static GLMgr* getInstance();
 private:
 
+    void useDefaultShader();
+
     void initVAOAndVBO();
-    void useTestTexture();
 
     GLProgram *glProgram;
     GLFWwindow* window;
