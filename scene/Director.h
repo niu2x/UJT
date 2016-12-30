@@ -28,6 +28,7 @@ public:
     void pushMatrix(MatrixType matType);
     void popMatrix(MatrixType matType);
     void loadMatrix(MatrixType matType, const Math::Mat4 &);
+    void loadIdentityMatrix(MatrixType matType);
     Math::Mat4 getMatrix(MatrixType matType);
     void multiplyMatrix(MatrixType matType, const Math::Mat4 &);
 private:

@@ -48,6 +48,11 @@ void Director::popMatrix(MatrixType matType){
 void Director::loadMatrix(MatrixType matType, const Math::Mat4 &m){
     getMatStack(matType)->top() = m;
 }
+
+void Director::loadIdentityMatrix(MatrixType matType){
+    loadMatrix(matType, Math::Mat4::IDENTITY);
+}
+
 Math::Mat4 Director::getMatrix(MatrixType matType){
     return getMatStack(matType)->top();
 }

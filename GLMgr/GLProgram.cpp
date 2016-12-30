@@ -22,7 +22,7 @@ GLProgram::~GLProgram(){
 }
 
 GLProgram *GLProgram::createWithGLProgramSource(GLProgramSource *_source){
-	GLProgram *program = new GLProgram();
+	GLProgram *program = new (std::nothrow) GLProgram();
 	if(program && program->initWithGLProgramSource(_source)){
 		program->autorelease();
 		return program;
@@ -197,6 +197,10 @@ void GLProgram::initParams(){
     glEnableVertexAttribArray(colorAttrib);
     glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)20);
 
+    GLint normalAttrib = glGetAttribLocation(programID, "normal");
+    glEnableVertexAttribArray(normalAttrib);
+    glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)36);
+
     GLint tex0Location = glGetUniformLocation(programID, "Texture0");
     GLint tex1Location = glGetUniformLocation(programID, "Texture1");
     GLint tex2Location = glGetUniformLocation(programID, "Texture2");
@@ -204,9 +208,17 @@ void GLProgram::initParams(){
 
     GLint viewLocation = glGetUniformLocation(programID, "view");
     GLint projectLocation = glGetUniformLocation(programID, "project");
+    GLint ambientLocation = glGetUniformLocation(programID, "ambient");
+    GLint diffuseLocation = glGetUniformLocation(programID, "diffuse");
+    GLint specularLocation = glGetUniformLocation(programID, "specular");
+    GLint shininessLocation = glGetUniformLocation(programID, "shininess");
 
     localtions[std::string("view")] = viewLocation;
     localtions[std::string("project")] = projectLocation;
+    localtions[std::string("ambient")] = ambientLocation;
+    localtions[std::string("diffuse")] = diffuseLocation;
+    localtions[std::string("specular")] = specularLocation;
+    localtions[std::string("shininess")] = shininessLocation;
 
     if(tex0Location != -1){
     	glUniform1i(tex0Location, 0);
@@ -225,9 +237,14 @@ void GLProgram::initParams(){
     }
 }
 
-void GLProgram::setUniformMatrix4fv(std::string name, void *ptr){
+void GLProgram::setUniformMatrix4fv(const std::string &name, void *ptr){
 	GLint location = localtions[name];
 	glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat *)ptr);
+}
+
+void GLProgram::setUniform1f(const std::string &name, GLfloat v){
+    GLint location = localtions[name];
+    glUniform1f(location, v);
 }
 
 void GLProgram::setBlendFunc(const BlendFunc &_blendFunc){

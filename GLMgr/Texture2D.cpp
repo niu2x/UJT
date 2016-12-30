@@ -17,7 +17,7 @@ Texture2D::~Texture2D(){
 }
 
 Texture2D *Texture2D::createWithRawData(unsigned char *data, int width, int height, GLenum imageFormat){
-	Texture2D *tex = new Texture2D();
+	Texture2D *tex = new (std::nothrow) Texture2D();
 	if(tex && tex->initWithRawData(data, width, height, imageFormat)){
 		tex->autorelease();
 		return tex;
@@ -50,7 +50,7 @@ void Texture2D::use(GLint index){
 }
 
 Texture2D *Texture2D::createWithFile(const char *filename){
-	Texture2D *tex = new Texture2D();
+	Texture2D *tex = new (std::nothrow) Texture2D();
 	if(tex && tex->initWithFile(filename)){
 		tex->autorelease();
 		return tex;

@@ -30,7 +30,8 @@ public:
 	static GLProgram *createWithGLProgramSource(GLProgramSource *);
 	void use();
 
-	void setUniformMatrix4fv(std::string name, void *);
+	void setUniformMatrix4fv(const std::string &name, void *);
+	void setUniform1f(const std::string &name, GLfloat);
 private:
 	GLProgram();
 	virtual ~GLProgram();
