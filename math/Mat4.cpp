@@ -364,22 +364,52 @@ void Mat4::createTranslation(float xTranslation, float yTranslation, float zTran
 
 void Mat4::add(float scalar)
 {
-    add(scalar, this);
+    add(scalar, this->m);
 }
 
-void Mat4::add(float scalar, Mat4* dst)
+void Mat4::add(float scalar, float* dst)
 {
-
+    dst[0]  = m[0]  + scalar;
+    dst[1]  = m[1]  + scalar;
+    dst[2]  = m[2]  + scalar;
+    dst[3]  = m[3]  + scalar;
+    dst[4]  = m[4]  + scalar;
+    dst[5]  = m[5]  + scalar;
+    dst[6]  = m[6]  + scalar;
+    dst[7]  = m[7]  + scalar;
+    dst[8]  = m[8]  + scalar;
+    dst[9]  = m[9]  + scalar;
+    dst[10] = m[10] + scalar;
+    dst[11] = m[11] + scalar;
+    dst[12] = m[12] + scalar;
+    dst[13] = m[13] + scalar;
+    dst[14] = m[14] + scalar;
+    dst[15] = m[15] + scalar;
 }
 
 void Mat4::add(const Mat4& mat)
 {
-    add(*this, mat, this);
+    add(this->m, mat.m, this->m);
 }
 
-void Mat4::add(const Mat4& m1, const Mat4& m2, Mat4* dst)
+void Mat4::add(float *m1, float *m2, float *dst)
 {
-
+    dst[0]  = m1[0]  + m2[0];
+    dst[1]  = m1[1]  + m2[1];
+    dst[2]  = m1[2]  + m2[2];
+    dst[3]  = m1[3]  + m2[3];
+    dst[4]  = m1[4]  + m2[4];
+    dst[5]  = m1[5]  + m2[5];
+    dst[6]  = m1[6]  + m2[6];
+    dst[7]  = m1[7]  + m2[7];
+    dst[8]  = m1[8]  + m2[8];
+    dst[9]  = m1[9]  + m2[9];
+    dst[10] = m1[10] + m2[10];
+    dst[11] = m1[11] + m2[11];
+    dst[12] = m1[12] + m2[12];
+    dst[13] = m1[13] + m2[13];
+    dst[14] = m1[14] + m2[14];
+    dst[15] = m1[15] + m2[15];
 }
 
 bool Mat4::decompose(Vec3* scale, Quaternion* rotation, Vec3* translation) const
@@ -639,22 +669,74 @@ void Mat4::multiply(float scalar, Mat4* dst) const
 
 void Mat4::multiply(const Mat4& m, float scalar, Mat4* dst)
 {
-    
+    dst[0]  = m[0]  * scalar;
+    dst[1]  = m[1]  * scalar;
+    dst[2]  = m[2]  * scalar;
+    dst[3]  = m[3]  * scalar;
+    dst[4]  = m[4]  * scalar;
+    dst[5]  = m[5]  * scalar;
+    dst[6]  = m[6]  * scalar;
+    dst[7]  = m[7]  * scalar;
+    dst[8]  = m[8]  * scalar;
+    dst[9]  = m[9]  * scalar;
+    dst[10] = m[10] * scalar;
+    dst[11] = m[11] * scalar;
+    dst[12] = m[12] * scalar;
+    dst[13] = m[13] * scalar;
+    dst[14] = m[14] * scalar;
+    dst[15] = m[15] * scalar;
 }
 
 void Mat4::multiply(const Mat4& mat)
 {
-    multiply(*this, mat, this);
+    multiply(this->m, mat.m, this->m);
 }
 
-void Mat4::multiply(const Mat4& m1, const Mat4& m2, Mat4* dst)
+void Mat4::multiply(float *m1, float *m2, float *dst)
 {
+    float product[16];
     
+    product[0]  = m1[0] * m2[0]  + m1[4] * m2[1] + m1[8]   * m2[2]  + m1[12] * m2[3];
+    product[1]  = m1[1] * m2[0]  + m1[5] * m2[1] + m1[9]   * m2[2]  + m1[13] * m2[3];
+    product[2]  = m1[2] * m2[0]  + m1[6] * m2[1] + m1[10]  * m2[2]  + m1[14] * m2[3];
+    product[3]  = m1[3] * m2[0]  + m1[7] * m2[1] + m1[11]  * m2[2]  + m1[15] * m2[3];
+    
+    product[4]  = m1[0] * m2[4]  + m1[4] * m2[5] + m1[8]   * m2[6]  + m1[12] * m2[7];
+    product[5]  = m1[1] * m2[4]  + m1[5] * m2[5] + m1[9]   * m2[6]  + m1[13] * m2[7];
+    product[6]  = m1[2] * m2[4]  + m1[6] * m2[5] + m1[10]  * m2[6]  + m1[14] * m2[7];
+    product[7]  = m1[3] * m2[4]  + m1[7] * m2[5] + m1[11]  * m2[6]  + m1[15] * m2[7];
+    
+    product[8]  = m1[0] * m2[8]  + m1[4] * m2[9] + m1[8]   * m2[10] + m1[12] * m2[11];
+    product[9]  = m1[1] * m2[8]  + m1[5] * m2[9] + m1[9]   * m2[10] + m1[13] * m2[11];
+    product[10] = m1[2] * m2[8]  + m1[6] * m2[9] + m1[10]  * m2[10] + m1[14] * m2[11];
+    product[11] = m1[3] * m2[8]  + m1[7] * m2[9] + m1[11]  * m2[10] + m1[15] * m2[11];
+    
+    product[12] = m1[0] * m2[12] + m1[4] * m2[13] + m1[8]  * m2[14] + m1[12] * m2[15];
+    product[13] = m1[1] * m2[12] + m1[5] * m2[13] + m1[9]  * m2[14] + m1[13] * m2[15];
+    product[14] = m1[2] * m2[12] + m1[6] * m2[13] + m1[10] * m2[14] + m1[14] * m2[15];
+    product[15] = m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15];
+    
+    memcpy(dst, product, MATRIX_SIZE);
 }
 
 void Mat4::negate()
 {
-
+    m[0]  = -m[0];
+    m[1]  = -m[1];
+    m[2]  = -m[2];
+    m[3]  = -m[3];
+    m[4]  = -m[4];
+    m[5]  = -m[5];
+    m[6]  = -m[6];
+    m[7]  = -m[7];
+    m[8]  = -m[8];
+    m[9]  = -m[9];
+    m[10] = -m[10];
+    m[11] = -m[11];
+    m[12] = -m[12];
+    m[13] = -m[13];
+    m[14] = -m[14];
+    m[15] = -m[15];
 }
 
 Mat4 Mat4::getNegated() const
@@ -802,9 +884,24 @@ void Mat4::subtract(const Mat4& mat)
     subtract(*this, mat, this);
 }
 
-void Mat4::subtract(const Mat4& m1, const Mat4& m2, Mat4* dst)
+void Mat4::subtract(float *m1, float *m2, float *dst)
 {
-    
+    dst[0]  = m1[0]  - m2[0];
+    dst[1]  = m1[1]  - m2[1];
+    dst[2]  = m1[2]  - m2[2];
+    dst[3]  = m1[3]  - m2[3];
+    dst[4]  = m1[4]  - m2[4];
+    dst[5]  = m1[5]  - m2[5];
+    dst[6]  = m1[6]  - m2[6];
+    dst[7]  = m1[7]  - m2[7];
+    dst[8]  = m1[8]  - m2[8];
+    dst[9]  = m1[9]  - m2[9];
+    dst[10] = m1[10] - m2[10];
+    dst[11] = m1[11] - m2[11];
+    dst[12] = m1[12] - m2[12];
+    dst[13] = m1[13] - m2[13];
+    dst[14] = m1[14] - m2[14];
+    dst[15] = m1[15] - m2[15];
 }
 
 void Mat4::transformVector(Vec3* vector) const
@@ -819,7 +916,9 @@ void Mat4::transformVector(const Vec3& vector, Vec3* dst) const
 
 void Mat4::transformVector(float x, float y, float z, float w, Vec3* dst) const
 {
-    
+    dst->x = x * m[0] + y * m[4] + z * m[8] + w * m[12];
+    dst->y = x * m[1] + y * m[5] + z * m[9] + w * m[13];
+    dst->z = x * m[2] + y * m[6] + z * m[10] + w * m[14];
 }
 
 void Mat4::transformVector(Vec4* vector) const
@@ -829,7 +928,15 @@ void Mat4::transformVector(Vec4* vector) const
 
 void Mat4::transformVector(const Vec4& vector, Vec4* dst) const
 {
-    
+    float x = vecter.x;
+    float y = vecter.y;
+    float z = vecter.z;
+    float w = vecter.w;
+
+    dst->x = x * m[0] + y * m[4] + z * m[8] + w * m[12];
+    dst->y = x * m[1] + y * m[5] + z * m[9] + w * m[13];
+    dst->z = x * m[2] + y * m[6] + z * m[10] + w * m[14];
+    dst->w = x * m[3] + y * m[7] + z * m[11] + w * m[15];
 }
 
 void Mat4::translate(float x, float y, float z)
@@ -856,7 +963,13 @@ void Mat4::translate(const Vec3& t, Mat4* dst) const
 
 void Mat4::transpose()
 {
-
+    float t[16] = {
+        m[0], m[4], m[8], m[12],
+        m[1], m[5], m[9], m[13],
+        m[2], m[6], m[10], m[14],
+        m[3], m[7], m[11], m[15]
+    };
+    memcpy(dst, t, MATRIX_SIZE);
 }
 
 Mat4 Mat4::getTransposed() const

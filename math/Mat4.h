@@ -326,7 +326,7 @@ public:
      * @param scalar The scalar value to add.
      * @param dst A matrix to store the result in.
      */
-    void add(float scalar, Mat4* dst);
+    void add(float scalar, float* dst);
 
     /**
      * Adds the specified matrix to this matrix.
@@ -342,7 +342,7 @@ public:
      * @param m2 The second matrix.
      * @param dst The destination matrix to add to.
      */
-    static void add(const Mat4& m1, const Mat4& m2, Mat4* dst);
+    static void add(float *m1, float *m2, float* dst);
 
     /**
      * Decomposes the scale, rotation and translation components of this matrix.
@@ -471,7 +471,7 @@ public:
      * @param scalar The scalar value.
      * @param dst A matrix to store the result in.
      */
-    static void multiply(const Mat4& mat, float scalar, Mat4* dst);
+    static void multiply(float *mat, float scalar, float *dst);
 
     /**
      * Multiplies this matrix by the specified one.
@@ -487,7 +487,7 @@ public:
      * @param m2 The second matrix to multiply.
      * @param dst A matrix to store the result in.
      */
-    static void multiply(const Mat4& m1, const Mat4& m2, Mat4* dst);
+    static void multiply(float *m1, float *m2, float *dst);
 
     /**
      * Negates this matrix.
@@ -702,8 +702,11 @@ public:
      * @param m2 The second matrix.
      * @param dst A matrix to store the result in.
      */
-    static void subtract(const Mat4& m1, const Mat4& m2, Mat4* dst);
+    static void subtract(float *m1, float *m2, float *dst);
 
+
+
+    //位置变换
     /**
      * Transforms the specified point by this matrix.
      *
@@ -722,6 +725,8 @@ public:
      */
     inline void transformPoint(const Vec3& point, Vec3* dst) const {transformVector(point.x, point.y, point.z, 1.0f, dst); }
 
+
+    //w置为0，意思是 vector代表一个方向，仅仅是方向的变换，只有旋转真的生效
     /**
      * Transforms the specified vector by this matrix by
      * treating the fourth (w) coordinate as zero.
