@@ -155,6 +155,22 @@ bool GLProgram::createProgram(){
     return success;
 }
 
+static const char* getShaderName(GLenum type){
+    switch(type){
+        case GL_VERTEX_SHADER:
+            return "顶点"; 
+        case GL_TESS_CONTROL_SHADER:
+            return "细分控制";
+        case GL_TESS_EVALUATION_SHADER:
+            return "细分计算";
+        case GL_GEOMETRY_SHADER:
+            return "图元";
+        case GL_FRAGMENT_SHADER:
+            return "片段";
+        default:
+            return "";
+    };
+}
 
 bool GLProgram::createShader(GLenum type, const GLchar* src, GLuint *shader)
 {
@@ -169,7 +185,7 @@ bool GLProgram::createShader(GLenum type, const GLchar* src, GLuint *shader)
 
     	char logs[1024];
     	glGetShaderInfoLog(*shader, 1023, 0, logs);
-    	puts("shader 编译失败");
+    	printf("shader %s 编译失败\n", getShaderName(type));
     	puts(logs);
 
     	glDeleteShader(*shader);
@@ -206,13 +222,19 @@ void GLProgram::initParams(){
     GLint tex2Location = glGetUniformLocation(programID, "Texture2");
     GLint tex3Location = glGetUniformLocation(programID, "Texture3");
 
+    GLint modelLocation = glGetUniformLocation(programID, "model");
+    GLint modelNormalLocation = glGetUniformLocation(programID, "modelNormal");
     GLint viewLocation = glGetUniformLocation(programID, "view");
+    GLint modelViewNormalLocation = glGetUniformLocation(programID, "modelViewNormal");
     GLint projectLocation = glGetUniformLocation(programID, "project");
     GLint ambientLocation = glGetUniformLocation(programID, "ambient");
     GLint diffuseLocation = glGetUniformLocation(programID, "diffuse");
     GLint specularLocation = glGetUniformLocation(programID, "specular");
     GLint shininessLocation = glGetUniformLocation(programID, "shininess");
 
+    localtions[std::string("model")] = modelLocation;
+    localtions[std::string("modelViewNormal")] = modelViewNormalLocation;
+    localtions[std::string("modelNormal")] = modelNormalLocation;
     localtions[std::string("view")] = viewLocation;
     localtions[std::string("project")] = projectLocation;
     localtions[std::string("ambient")] = ambientLocation;

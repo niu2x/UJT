@@ -43,11 +43,8 @@ public:
     static GLMgr* getInstance();
 private:
 
-    void useDefaultShader();
-
     void initVAOAndVBO();
 
-    GLProgram *glProgram;
     GLFWwindow* window;
     int width, height;
     bool inited;

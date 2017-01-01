@@ -15,68 +15,39 @@
 #include "macro.h"
 #include "math/Vec3.h"
 
+#include "scene/Scene.h"
+#include "scene/Mesh.h"
+#include "scene/Material.h"
+#include "scene/Camera.h"
+
 int main(void)
 {
 
-    Vertex vertexs[5];
-    vertexs[0].x = -1000;
-    vertexs[0].y = -1000;
-    vertexs[0].z = 0;
-    vertexs[0].r = 1;
-    vertexs[0].g = 0;
-    vertexs[0].b = 0;
-    vertexs[0].a = 1;
-    vertexs[0].u = 0;
-    vertexs[0].v = 0;
-
-    vertexs[1].x = 1000;
-    vertexs[1].y = -1000;
-    vertexs[1].z = 0;
-    vertexs[1].r = 0;
-    vertexs[1].g = 1;
-    vertexs[1].b = 0;
-    vertexs[1].a = 1;
-    vertexs[1].u = 1;
-    vertexs[1].v = 0;
-
-    vertexs[2].x = 1000;
-    vertexs[2].y = 1000;
-    vertexs[2].z = 0;
-    vertexs[2].r = 0;
-    vertexs[2].g = 0;
-    vertexs[2].b = 1;
-    vertexs[2].a = 1;
-    vertexs[2].u = 1;
-    vertexs[2].v = 1;
-
-    vertexs[3].x = -1000;
-    vertexs[3].y = 1000;
-    vertexs[3].z = 0;
-    vertexs[3].r = 0;
-    vertexs[3].g = 0;
-    vertexs[3].b = 1;
-    vertexs[3].a = 1;
-    vertexs[3].u = 0;
-    vertexs[3].v = 1;
-
-    vertexs[4].x = 0;
-    vertexs[4].y = 0;
-    vertexs[4].z = 0;
-    vertexs[4].r = 0;
-    vertexs[4].g = 0;
-    vertexs[4].b = 1;
-    vertexs[4].a = 1;
-    vertexs[4].u = 0.5;
-    vertexs[4].v = 0.5;
-
-    GLushort indices[] = {4, 2, 3, 4, 0, 1, 4, 1, 2, 4, 3, 0};
-
-
     Director::createInstance();
 
-    // auto scene = Scene::create();
+    auto scene = Scene::create();
     // scene->setCamera(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1));
-    // Director::getInstance()->pushScene(scene);
+    Director::getInstance()->pushScene(scene);
+
+    auto node = Node::create();
+    node->setName("node");
+    scene->addChild(node);
+
+    auto mesh = Mesh::createCube(100);
+    node->setMesh(mesh);
+
+    auto material = Material::create();
+    material->useDefaultShader();
+
+    mesh->setMaterial(material);
+
+    auto camera = Camera::create();
+
+    scene->addChild(camera);
+    camera->lookAt(Math::Vec3(300, 300, 300), Math::Vec3(0, 0, 0), Math::Vec3(0, 0, 1));
+    camera->setPerspective(60, 640.0/480.0, 1, 10000);
+    // camera->setOrthographic(640, 480, 1, 10000);
+
     Director::getInstance()->run();
 
     Director::deleteInstance();

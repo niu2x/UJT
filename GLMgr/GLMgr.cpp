@@ -90,7 +90,6 @@ bool GLMgr::init(int _width, int _height){
 
     	initVAOAndVBO();
 
-        useDefaultShader();
         setFPS(32);
 
         inited = true;
@@ -113,7 +112,6 @@ void GLMgr::initVAOAndVBO(){
 GLMgr::~GLMgr(){
     Texture2DManager::deleteInstance();
 	if(inited){
-        SAFE_RELEASE(glProgram);
         glDeleteBuffers(1, &VBO);
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &EBO);
@@ -152,7 +150,7 @@ void GLMgr::run(){
 }
 
 void GLMgr::setClearColor(float r, float g, float b, float a){
-	glClearColor(r*0xff, g*0xff, b*0xff, a*0xff);
+	glClearColor(r, g, b, a);
 }
 
 void GLMgr::clearColor(){
@@ -173,72 +171,9 @@ void GLMgr::drawTriangles(
     const GLushort indices[],
     int numOfIndices
 ){
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)*numOfIndices, indices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*numOfIndices, indices, GL_DYNAMIC_DRAW);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*num, vertex, GL_DYNAMIC_DRAW);
     glDrawElements(GL_TRIANGLES, numOfIndices, GL_UNSIGNED_SHORT, 0);
-}
-
-void GLMgr::useDefaultShader(){
-    const GLchar* default_vertexSource = GLSL(
-
-        uniform mat4 view;
-        uniform mat4 project;
-
-        in vec3 position;
-        in vec2 uv;
-        in vec4 color;
-        out vec4 mColor;
-        out vec2 mUV;
-        void main() {
-            mColor = color;
-            mUV = uv;
-            gl_Position = project * view * vec4(position, 1.0f);
-        }
-    );
-
-    const GLchar* default_fragmentSource = GLSL(
-        uniform sampler2D Texture0;
-        uniform sampler2D Texture1;
-        uniform sampler2D Texture2;
-        uniform sampler2D Texture3;
-        in vec4 mColor;
-        in vec2 mUV;
-        out vec4 oColor;
-        void main() {
-            oColor = texture(Texture0, mUV);
-            oColor = oColor*texture(Texture1, mUV);
-        }
-    );
-
-    auto shaderSource = GLProgramSource::createWithStrings(
-        default_vertexSource, nullptr, nullptr, nullptr, default_fragmentSource
-    );
-
-
-    glProgram = GLProgram::createWithGLProgramSource(shaderSource);
-    glProgram->retain();
-
-    glProgram->use();
-
-
-    auto view = Math::Mat4();
-    Math::Mat4::createLookAt(
-        Math::Vec3(0, 0, 2000),
-        Math::Vec3(0, 0, 0),
-        Math::Vec3(0, 1, 0),
-        &view
-    );
-    glProgram->setUniformMatrix4fv("view", view.m);
-
-    auto project = Math::Mat4();
-    Math::Mat4::createPerspective(
-        60,
-        1,
-        1,
-        8000,
-        &project
-    );
-    glProgram->setUniformMatrix4fv("project", project.m);
 }
 
 void GLMgr::setFPS(float __targetFPS){

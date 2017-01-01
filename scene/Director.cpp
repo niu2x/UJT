@@ -1,6 +1,10 @@
 #include "../GLMgr/GLMgr.h"
 #include "../refCount/AutoReleasePool.h"
 #include "Director.h"
+
+#include "Scene.h"
+#include <math.h>
+
 Director *Director::instance = nullptr;
 
 void Director::createInstance(){
@@ -22,12 +26,24 @@ Director *Director::getInstance(){
 
 
 void Director::pushScene(Scene *s){
+    if(!scenes.empty()){
+        scenes.top()->onExitScene();
+    }
+    s->retain();
+    s->onEnterScene();
     scenes.push(s);
 }
 
 void Director::popScene(){
-    if(!scenes.empty())
+    if(!scenes.empty()){
+        auto s = scenes.top();
         scenes.pop();
+        s->onExitScene();
+        s->release();
+        if(!scenes.empty()){
+            scenes.top()->onEnterScene();
+        }
+    }
 }
 
 void Director::replaceScene(Scene *s){
@@ -74,19 +90,38 @@ std::stack<Math::Mat4> *Director::getMatStack(MatrixType matType){
     }
 }
 
+static float rx = 0;
+static float ry = 0;
+static float z = 0;
+
 bool Director::update(){
+
+    // scenes.top()->getNode("node")->setPosition(Math::Vec3(0, 0, -z));
+    // z += 1;
+    // if(z > 200){
+    //     z = 0;
+    // }
+    scenes.top()->getNode("node")->setRotation(Math::Vec3(rx, sin(ry)*sin(sqrt(rx)), sin(rx)));
+    scenes.top()->getNode("node")->setScale(Math::Vec3(1 + sin(ry)/2, 1+sin(rx)/2, 1+sin(rx+ry)/2));
+    rx += 0.01;
+    ry += 0.02;
     return false;
 }
 
 void Director::render(){
-
+    auto glMgr = GLMgr::getInstance();
+    glMgr->clearColor();
+    glMgr->clearDepth();
+    glMgr->clearStencil();
+    scenes.top()->visit();
 }
 
 Director::Director(){
     PoolManager::getInstance()->createInstance();
     GLMgr::getInstance()->createInstance();
     GLMgr::getInstance()->init(640, 480);
-    GLMgr::getInstance()->setClearColor(0, 0, 0, 0.5);
+    // GLMgr::getInstance()->setClearColor(0.1, 1, 0.1, 0);
+    GLMgr::getInstance()->setClearColor(0.1, .1, .1, 0);
 
     GLMgr::getInstance()->setRenderFunc([this](){
         this->render();
@@ -104,4 +139,13 @@ Director::~Director(){
 
     GLMgr::getInstance()->deleteInstance();
     PoolManager::getInstance()->deleteInstance();
+}
+
+Scene* Director::getRunningScene(){
+    if(!scenes.empty()){
+        return scenes.top();
+    }
+    else{
+        return nullptr;
+    }
 }

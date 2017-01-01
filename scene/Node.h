@@ -13,11 +13,11 @@
 class GLProgram;
 
 class Mesh;
+class Scene;
 
 class Node:public Ref{
 public:
-	Node* create();
-	Node* create(const std::string &);
+	static Node* create();
 
 	void setPosition(const Math::Vec3&);
 	Math::Vec3 getPosition()const{
@@ -53,7 +53,7 @@ public:
 	Node *getChildByName(const std::string &name);
 	void removeChild(Node *);
 	void removeAllChildren();
-	Node *getParent();
+	Node *getParent()const{return parent;}
 	Node *getNode(const std::string &path);
 
 	virtual void setName(const std::string &);
@@ -68,10 +68,12 @@ public:
 	void setMesh(Mesh *);
 	Mesh *getMesh();
 
-	void onEnterScene();
-	void onExitScene();
+	virtual void onEnterScene();
+	virtual void __onEnterScene();
+	virtual void onExitScene();
+	virtual void __onExitScene();
 
-	void isRunning(){
+	bool isRunning(){
 		return running;
 	} //处在RunningScene中
 
@@ -79,22 +81,25 @@ public:
 	Math::Mat4 getParentToNodeTransform()const;
 	Math::Mat4 getNodeToWorldTransform()const;
 	Math::Mat4 getWorldToNodeTransform()const;
+	Math::Mat4 getNodeToAncestorTransform(Node *)const;
+	Math::Mat4 getAncestorToNodeTransform(Node *)const;
 
-private:
+	virtual ~Node();
+
+protected:
 
 	Node();
 	Node(const Node &);
 	Node& operator=(const Node &);
-	virtual ~Node();
 
-	bool init(const std::string &);
+	virtual bool init();
 
 	void __addChild(Node *);
 	void __removeChild(Node *);
 
 	Math::Vec3 position;
 	Math::Vec3 rotation;
-	Math::Quaternion quad;
+	Math::Quaternion quat;
 	Math::Vec3 scale;
 
 	bool visible;

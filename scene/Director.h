@@ -22,6 +22,7 @@ public:
     void pushScene(Scene *);
     void popScene();
     void replaceScene(Scene *);
+    Scene *getRunningScene();
 
     void run();
 
@@ -31,13 +32,15 @@ public:
     void loadIdentityMatrix(MatrixType matType);
     Math::Mat4 getMatrix(MatrixType matType);
     void multiplyMatrix(MatrixType matType, const Math::Mat4 &);
+
+	virtual ~Director();
+    
 private:
     void render();
     bool update();
 
 private:
 	Director();
-	virtual ~Director();
 
 	Director(const Director &);
 	Director& operator=(const Director &);

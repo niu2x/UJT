@@ -31,7 +31,7 @@ Mat4::~Mat4()
 {
 }
 
-void Mat4::createLookAt(const Vec3& eyePosition, const Vec3& targetPosition, const Vec3& up, Mat4* dst)
+void Mat4::createLookAt(const Vec3& eyePosition, const Vec3& targetPosition,const  Vec3& up, Mat4* dst)
 {
     createLookAt(eyePosition.x, eyePosition.y, eyePosition.z, targetPosition.x, targetPosition.y, targetPosition.z,
                  up.x, up.y, up.z, dst);
@@ -123,13 +123,13 @@ void Mat4::createOrthographicOffCenter(float left, float right, float bottom, fl
     dst->m[15] = 1;
 }
     
-void Mat4::createBillboard(const Vec3& objectPosition, const Vec3& cameraPosition,
-                             const Vec3& cameraUpVector, Mat4* dst)
+void Mat4::createBillboard(const Vec3& objectPosition,const  Vec3& cameraPosition,
+                           const   Vec3& cameraUpVector, Mat4* dst)
 {
     createBillboardHelper(objectPosition, cameraPosition, cameraUpVector, nullptr, dst);
 }
 
-void Mat4::createBillboard(const Vec3& objectPosition, const Vec3& cameraPosition,
+void Mat4::createBillboard( const Vec3& objectPosition, const Vec3& cameraPosition,
                              const Vec3& cameraUpVector, const Vec3& cameraForwardVector,
                              Mat4* dst)
 {
@@ -169,7 +169,7 @@ void Mat4::createBillboardHelper(const Vec3& objectPosition, const Vec3& cameraP
     }
 }
     
-// void Mat4::createReflection(const Plane& plane, Mat4* dst)
+// void Mat4::createReflection( Plane& plane, Mat4* dst)
 // {
 //     Vec3 normal(plane.getNormal());
 //     float k = -2.0f * plane.getDistance();
@@ -389,7 +389,7 @@ void Mat4::add(float scalar, float* dst)
 
 void Mat4::add(const Mat4& mat)
 {
-    add(this->m, mat.m, this->m);
+    add(this->m, (float *)(mat.m), this->m);
 }
 
 void Mat4::add(float *m1, float *m2, float *dst)
@@ -647,7 +647,7 @@ bool Mat4::inverse()
     inverse.m[14] = -m[12] * a3 + m[13] * a1 - m[14] * a0;
     inverse.m[15] = m[8] * a3 - m[9] * a1 + m[10] * a0;
 
-    multiply(inverse, 1.0f / det, this);
+    multiply(inverse.m, 1.0f / det, this->m);
 
     return true;
 }
@@ -662,12 +662,12 @@ void Mat4::multiply(float scalar)
     multiply(scalar, this);
 }
 
-void Mat4::multiply(float scalar, Mat4* dst) const
+void Mat4::multiply(float scalar, Mat4* dst)const
 {
-    multiply(*this, scalar, dst);
+    multiply(this->m, scalar, dst->m);
 }
 
-void Mat4::multiply(const Mat4& m, float scalar, Mat4* dst)
+void Mat4::multiply(const float *m, float scalar, float *dst)
 {
     dst[0]  = m[0]  * scalar;
     dst[1]  = m[1]  * scalar;
@@ -689,10 +689,10 @@ void Mat4::multiply(const Mat4& m, float scalar, Mat4* dst)
 
 void Mat4::multiply(const Mat4& mat)
 {
-    multiply(this->m, mat.m, this->m);
+    multiply(this->m, (float *)(mat.m), this->m);
 }
 
-void Mat4::multiply(float *m1, float *m2, float *dst)
+void Mat4::multiply(const float *m1, const float *m2, float *dst)
 {
     float product[16];
     
@@ -751,11 +751,11 @@ void Mat4::rotate(const Quaternion& q)
     rotate(q, this);
 }
 
-void Mat4::rotate(const Quaternion& q, Mat4* dst) const
+void Mat4::rotate(const Quaternion& q, Mat4* dst)const
 {
     Mat4 r;
     createRotation(q, &r);
-    multiply(*this, r, dst);
+    multiply(this->m, (float*)(r.m), dst->m);
 }
 
 void Mat4::rotate(const Vec3& axis, float angle)
@@ -763,11 +763,11 @@ void Mat4::rotate(const Vec3& axis, float angle)
     rotate(axis, angle, this);
 }
 
-void Mat4::rotate(const Vec3& axis, float angle, Mat4* dst) const
+void Mat4::rotate(const Vec3& axis, float angle, Mat4* dst)const
 {
     Mat4 r;
     createRotation(axis, angle, &r);
-    multiply(*this, r, dst);
+    multiply(this->m, r.m, dst->m);
 }
 
 void Mat4::rotateX(float angle)
@@ -779,7 +779,7 @@ void Mat4::rotateX(float angle, Mat4* dst) const
 {
     Mat4 r;
     createRotationX(angle, &r);
-    multiply(*this, r, dst);
+    multiply(this->m, r.m, dst->m);
 }
 
 void Mat4::rotateY(float angle)
@@ -791,7 +791,7 @@ void Mat4::rotateY(float angle, Mat4* dst) const
 {
     Mat4 r;
     createRotationY(angle, &r);
-    multiply(*this, r, dst);
+    multiply(this->m, r.m, dst->m);
 }
 
 void Mat4::rotateZ(float angle)
@@ -803,7 +803,7 @@ void Mat4::rotateZ(float angle, Mat4* dst) const
 {
     Mat4 r;
     createRotationZ(angle, &r);
-    multiply(*this, r, dst);
+    multiply(this->m, r.m, dst->m);
 }
 
 void Mat4::scale(float value)
@@ -825,15 +825,15 @@ void Mat4::scale(float xScale, float yScale, float zScale, Mat4* dst) const
 {
     Mat4 s;
     createScale(xScale, yScale, zScale, &s);
-    multiply(*this, s, dst);
+    multiply(this->m, s.m, dst->m);
 }
 
-void Mat4::scale(const Vec3& s)
+void Mat4::scale( const Vec3& s)
 {
     scale(s.x, s.y, s.z, this);
 }
 
-void Mat4::scale(const Vec3& s, Mat4* dst) const
+void Mat4::scale( const Vec3& s, Mat4* dst)const
 {
     scale(s.x, s.y, s.z, dst);
 }
@@ -881,10 +881,10 @@ void Mat4::setZero()
 
 void Mat4::subtract(const Mat4& mat)
 {
-    subtract(*this, mat, this);
+    subtract(this->m, mat.m, this->m);
 }
 
-void Mat4::subtract(float *m1, float *m2, float *dst)
+void Mat4::subtract(const float *m1, const float *m2, float *dst)
 {
     dst[0]  = m1[0]  - m2[0];
     dst[1]  = m1[1]  - m2[1];
@@ -928,10 +928,10 @@ void Mat4::transformVector(Vec4* vector) const
 
 void Mat4::transformVector(const Vec4& vector, Vec4* dst) const
 {
-    float x = vecter.x;
-    float y = vecter.y;
-    float z = vecter.z;
-    float w = vecter.w;
+    float x = vector.x;
+    float y = vector.y;
+    float z = vector.z;
+    float w = vector.w;
 
     dst->x = x * m[0] + y * m[4] + z * m[8] + w * m[12];
     dst->y = x * m[1] + y * m[5] + z * m[9] + w * m[13];
@@ -948,7 +948,7 @@ void Mat4::translate(float x, float y, float z, Mat4* dst) const
 {
     Mat4 t;
     createTranslation(x, y, z, &t);
-    multiply(*this, t, dst);
+    multiply(this->m, t.m, dst->m);
 }
 
 void Mat4::translate(const Vec3& t)
@@ -956,7 +956,7 @@ void Mat4::translate(const Vec3& t)
     translate(t.x, t.y, t.z, this);
 }
 
-void Mat4::translate(const Vec3& t, Mat4* dst) const
+void Mat4::translate(const Vec3& t, Mat4* dst)const
 {
     translate(t.x, t.y, t.z, dst);
 }
@@ -969,7 +969,7 @@ void Mat4::transpose()
         m[2], m[6], m[10], m[14],
         m[3], m[7], m[11], m[15]
     };
-    memcpy(dst, t, MATRIX_SIZE);
+    memcpy(m, t, MATRIX_SIZE);
 }
 
 Mat4 Mat4::getTransposed() const

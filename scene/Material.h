@@ -7,13 +7,20 @@
 #include "../refCount/Ref.h"
 
 class Texture2D;
+class GLProgram;
 
 class Material:public Ref{
 public:
-	typedef {
+	typedef struct Color{
 		GLfloat r;
 		GLfloat g;
 		GLfloat b;
+
+		Color(GLfloat _r, GLfloat _g, GLfloat _b){
+			r = _r;
+			g = _g;
+			b = _b;
+		}
 	}Color;
 
 	Color ambient;
@@ -21,28 +28,57 @@ public:
 	Color specular;
 	GLfloat shininess;
 
-	Texture2D *tex;
+	static Material *create();
 
-	Material *create();
+	Material::Color getAmbient()const{
+		return ambient;
+	}
+	Material::Color getDiffuse()const{
+		return diffuse;
+	}
+	Material::Color getSpecular()const{
+		return specular;
+	}
+	GLfloat getShininess()const{
+		return shininess;
+	}
+	Texture2D *getTexture2D()const{
+		return tex;
+	}
 
-	Material::Color getAmbient()const;
-	Material::Color getDiffuse()const;
-	Material::Color getSpecular()const;
-	GLfloat getShininess()const;
-	Texture2D *getTexture2D()const;
+	GLProgram *getGLProgram()const{
+		return program;
+	}
 
-	void setAmbient(const Material::Color &);
-	void setDiffuse(const Material::Color &);
-	void setSpecular(const Material::Color &);
-	void setShininess(GLfloat);
+	void setAmbient(const Material::Color &c){
+		ambient = c;
+	}
+	void setDiffuse(const Material::Color &c){
+		diffuse = c;
+	}
+	void setSpecular(const Material::Color &c){
+		specular = c;
+	}
+	void setShininess(GLfloat __shininess){
+		shininess = __shininess;
+	}
 	void setTexture2D(Texture2D *);
+	void setGLProgram(GLProgram *program);
+
+	void use();
+
+	void useDefaultShader();
+	void useDefaultShader2();
 	
-private:
+	virtual ~Material();
+
+protected:
+	Texture2D *tex;
+	GLProgram *program;
 
 	Material();
 	Material(const Material &);
 	Material& operator=(const Material &);
-	virtual ~Material();
 };
 
 #endif

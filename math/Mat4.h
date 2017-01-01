@@ -471,7 +471,7 @@ public:
      * @param scalar The scalar value.
      * @param dst A matrix to store the result in.
      */
-    static void multiply(float *mat, float scalar, float *dst);
+    static void multiply(const float *mat, float scalar, float *dst);
 
     /**
      * Multiplies this matrix by the specified one.
@@ -487,7 +487,7 @@ public:
      * @param m2 The second matrix to multiply.
      * @param dst A matrix to store the result in.
      */
-    static void multiply(float *m1, float *m2, float *dst);
+    static void multiply(const float *m1, const float *m2, float *dst);
 
     /**
      * Negates this matrix.
@@ -702,7 +702,7 @@ public:
      * @param m2 The second matrix.
      * @param dst A matrix to store the result in.
      */
-    static void subtract(float *m1, float *m2, float *dst);
+    static void subtract(const float *m1, const float *m2, float *dst);
 
 
 
